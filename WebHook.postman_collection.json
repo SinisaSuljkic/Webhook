@@ -1,0 +1,708 @@
+{
+	"info": {
+		"_postman_id": "10acf20d-05c4-4b79-b7f8-3c9034634db5",
+		"name": "WebHook",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26165058"
+	},
+	"item": [
+		{
+			"name": "Listing Extensions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check for 200 OK response",
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Parse the response JSON",
+							"var responseBody = pm.response.json();",
+							"",
+							"// Check if there is an error field in the response",
+							"if ('error' in responseBody) {",
+							"    console.error(\"Test Failed: \" + responseBody.error);",
+							"    pm.test('API Response Error', function () {",
+							"        pm.expect.fail(responseBody.error);",
+							"    });",
+							"} else {",
+							"    // Check if the response contains an array of extensions",
+							"    pm.test('Response Validation', function () {",
+							"        var extensionKeys = Object.keys(responseBody);",
+							"        pm.expect(extensionKeys).to.have.length.above(0);",
+							"",
+							"        // Store extension IDs in an array",
+							"        var extensionIDs = [];",
+							"        for (var extId in responseBody) {",
+							"            if (responseBody.hasOwnProperty(extId)) {",
+							"                var extension = responseBody[extId];",
+							"                pm.test('Extension ' + extId + ' Validation', function () {",
+							"                    pm.expect(extension).to.have.property('name').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('email').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('protocol').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('ext').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('location').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('ua_id').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('ua_name').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('ua_fullname').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('status').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('linenum').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('user_location').that.is.a('string');",
+							"                    // 'macaddress' and 'department' are optional fields, so we will not perform type checks for them.",
+							"                });",
+							"",
+							"                // Add the new extension ID to the array",
+							"                extensionIDs.push(parseInt(extId));",
+							"            }",
+							"        }",
+							"",
+							"        // Save the extension IDs to the Postman environment variable",
+							"        pm.environment.set('ExtensionIDs', JSON.stringify(extensionIDs));",
+							"    });",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{IP}}/index.php?apikey={{API_Key}}&action=pbxware.ext.list&server={{Server}}",
+					"protocol": "http",
+					"host": [
+						"{{IP}}"
+					],
+					"path": [
+						"index.php"
+					],
+					"query": [
+						{
+							"key": "apikey",
+							"value": "{{API_Key}}"
+						},
+						{
+							"key": "action",
+							"value": "pbxware.ext.list"
+						},
+						{
+							"key": "server",
+							"value": "{{Server}}",
+							"description": "Server or tenant ID"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Extension Configuration",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check for 200 OK response",
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Parse the response JSON",
+							"var responseBody = pm.response.json();",
+							"",
+							"// Check if there is an error field in the response",
+							"if ('error' in responseBody) {",
+							"    console.error(\"Test Failed: \" + responseBody.error);",
+							"    pm.test('API Response Error', function () {",
+							"        pm.expect.fail(responseBody.error);",
+							"    });",
+							"} else {",
+							"    // Check if the response contains the expected fields",
+							"    pm.test('Response Validation', function () {",
+							"        pm.expect(responseBody).to.be.an('object');",
+							"",
+							"        for (var extId in responseBody) {",
+							"            if (responseBody.hasOwnProperty(extId)) {",
+							"                var extension = responseBody[extId];",
+							"                pm.test('Extension ' + extId + ' Fields Validation', function () {",
+							"                    pm.expect(extension).to.have.property('name').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('email').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('pin').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('protocol').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('ext').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('location').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('user_language').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('ua_id').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('ua_name').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('ua_fullname').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('status').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('smuser').that.is.a('string');",
+							"                    pm.expect(extension).to.have.property('options').that.is.an('object');",
+							"                    pm.expect(extension.options).to.have.property('type').that.is.a('string');",
+							"                    pm.expect(extension.options).to.have.property('dtmfmode').that.is.a('string');",
+							"                    // Add more checks for other fields in the 'options' object if needed",
+							"                    // ...",
+							"",
+							"                    // 'options_raw', 'ua_autoprov', 'additional_macaddress', 'additional_config', and other fields are optional,",
+							"                    // so we will not perform type checks for them.",
+							"                });",
+							"            }",
+							"        }",
+							"    });",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{IP}}/index.php?apikey={{API_Key}}&action=pbxware.ext.configuration&server={{Server}}&id={{ExtensionIDs}}",
+					"protocol": "http",
+					"host": [
+						"{{IP}}"
+					],
+					"path": [
+						"index.php"
+					],
+					"query": [
+						{
+							"key": "apikey",
+							"value": "{{API_Key}}"
+						},
+						{
+							"key": "action",
+							"value": "pbxware.ext.configuration"
+						},
+						{
+							"key": "server",
+							"value": "{{Server}}",
+							"description": "Server or tenant ID"
+						},
+						{
+							"key": "id",
+							"value": "{{ExtensionIDs}}",
+							"description": "Extension ID of which we want to get configuration."
+						},
+						{
+							"key": "ext",
+							"value": "{{name}}",
+							"description": "Note: You cannot supply id and ext at the same time!",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listing DIDs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.unset(\"DID-IDs\");",
+							"pm.collectionVariables.unset(\"DID-IDs\");",
+							"",
+							"// Check for 200 OK response",
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Parse the response JSON",
+							"var responseBody = pm.response.json();",
+							"",
+							"// Check if there is an error field in the response",
+							"if ('error' in responseBody) {",
+							"    console.error(\"Test Failed: \" + responseBody.error);",
+							"    pm.test('API Response Error', function () {",
+							"        pm.expect.fail(responseBody.error);",
+							"    });",
+							"} else {",
+							"    // Check if the response is an empty array",
+							"    if (Array.isArray(responseBody) && responseBody.length === 0) {",
+							"        console.log(\"No DID found. Try with different values for Server or Ext field!\");",
+							"        pm.test('No found error', function () {",
+							"            pm.expect.fail(\"No DID found for given inputs.Try with different values for Server or Ext field!\");",
+							"        });",
+							"    } else {",
+							"        // Validate the response structure and loop through DIDs data",
+							"        pm.test('Response Validation', function () {",
+							"            pm.expect(responseBody).to.be.an('object');",
+							"",
+							"            // Get the existing DIDs array from the environment",
+							"            var didIDs = pm.collectionVariables.get('DID-IDs') || [];",
+							"            ",
+							"            for (var didID in responseBody) {",
+							"                var didData = responseBody[didID];",
+							"                ",
+							"                // Validate specific properties for each DID",
+							"                pm.test('DID ' + didID + ' Data Validation', function () {",
+							"                    pm.expect(didData).to.be.an('object');",
+							"                    pm.expect(didData).to.have.property('number').that.is.a('string');",
+							"                    pm.expect(didData).to.have.property('number2').that.is.oneOf([null, 'string']);",
+							"                    pm.expect(didData).to.have.property('server').that.is.a('string');",
+							"                    pm.expect(didData).to.have.property('trunk').that.is.a('string');",
+							"                    pm.expect(didData).to.have.property('type').that.is.a('string');",
+							"                    pm.expect(didData).to.have.property('ext').that.is.a('string');",
+							"                    pm.expect(didData).to.have.property('status').that.is.oneOf(['enabled', 'disabled']);",
+							"                    pm.expect(didData).to.have.property('sms_enabled').that.is.oneOf([null,'1', '0']);",
+							"",
+							"                    // Validate e164 field",
+							"                    if (didData.e164 !== null) {",
+							"                        pm.expect(didData.e164).to.be.a('string').and.match(/^\\d+$/);",
+							"                    }",
+							"",
+							"                     // Validate e164_2 field",
+							"                     if (didData.e164_2 !== null) {",
+							"                        pm.expect(didData.e164_2).to.be.a('string').and.match(/^\\d+$/);",
+							"                    }",
+							"                    ",
+							"                    // Print the result for each DID",
+							"                    console.log('DID ID:', didID);",
+							"                    console.log('DID Number:', didData.number);",
+							"                    console.log('DID Number2:', didData.number2);",
+							"                    console.log('Server ID:', didData.server);",
+							"                    console.log('Trunk ID:', didData.trunk);",
+							"                    console.log('DID Type:', didData.type);",
+							"                    console.log('Extension:', didData.ext);",
+							"                    console.log('E.164 Number:', didData.e164);",
+							"                    console.log('E.164 Number2:', didData.e164_2);",
+							"                    console.log('Status:', didData.status);",
+							"                    console.log('SMS Enabled:', didData.sms_enabled);",
+							"                    console.log();",
+							"",
+							"                    // Push the new DID ID to the DIDs array",
+							"                    didIDs.push(didID);",
+							"                });",
+							"            }",
+							"            // Update the DIDs array in the environment",
+							"            pm.collectionVariables.set('DID-IDs', didIDs);",
+							"            pm.environment.set('DID-IDs', didIDs);",
+							"        });",
+							"    }",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{IP}}/index.php?apikey={{API_Key}}&action=pbxware.did.list&server={{Server}}",
+					"protocol": "http",
+					"host": [
+						"{{IP}}"
+					],
+					"path": [
+						"index.php"
+					],
+					"query": [
+						{
+							"key": "apikey",
+							"value": "{{API_Key}}"
+						},
+						{
+							"key": "action",
+							"value": "pbxware.did.list",
+							"description": "Listing of DIDs, by default, will include all DIDs."
+						},
+						{
+							"key": "server",
+							"value": "{{Server}}",
+							"description": "Filter DID list by Tenant ID. If PBXware is running in Tenant Mode this is a required field and must contain a valid Tenant ID. ID 1 is always assigned to Master tenant and cannot be used. You can use CSV file \"SrvTenantIDs.csv\" to get all DIDs of tenants."
+						},
+						{
+							"key": "ext",
+							"value": "",
+							"description": "Filter DID list by Destination Number. (Regex: /^[\\\\d,]+$/)",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listing Ring Groups",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check for 200 OK response",
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Parse the response JSON",
+							"var responseBody = pm.response.json();",
+							"",
+							"// Check if there is an error field in the response",
+							"if ('error' in responseBody) {",
+							"    console.error(\"Test Failed: \" + responseBody.error);",
+							"    pm.test('API Response Error', function () {",
+							"        pm.expect.fail(responseBody.error);",
+							"    });",
+							"} else if (Object.keys(responseBody).length === 0) {",
+							"    console.log(\"There is no Ring Groups for this Server/Tenant!\");",
+							"    pm.test('No Ring Groups!', function () {",
+							"        pm.expect.fail(\"No Ring Groups for this Server/Tenant!\");",
+							"    });",
+							"} else {",
+							"    // Validate the response structure",
+							"    pm.test('Response Validation', function () {",
+							"        pm.expect(responseBody).to.be.an('object');",
+							"        ",
+							"        // Initialize array to store Ring Group IDs",
+							"        var rgIDs = [];",
+							"        ",
+							"        // Loop through Ring Group data",
+							"        for (var ringGroupID in responseBody) {",
+							"            var ringGroupData = responseBody[ringGroupID];",
+							"            ",
+							"            // Validate specific properties for each Ring Group",
+							"            pm.test('Ring Group ' + ringGroupID + ' Data Validation', function () {",
+							"                pm.expect(ringGroupData).to.be.an('object');",
+							"                pm.expect(ringGroupData).to.have.property('name').that.is.a('string');",
+							"                pm.expect(ringGroupData).to.have.property('ext').that.is.a('string');",
+							"                pm.expect(ringGroupData).to.have.property('destinations').that.is.a('string');",
+							"                pm.expect(ringGroupData).to.have.property('last_dest').that.is.a('string');",
+							"                pm.expect(ringGroupData).to.have.property('last_dest_vm').that.is.oneOf(['yes', 'no']);",
+							"                ",
+							"                // Print the result for each Ring Group",
+							"                console.log('Ring Group ID:', ringGroupID);",
+							"                console.log('Ring Group Name:', ringGroupData.name);",
+							"                console.log('Ring Group Extension:', ringGroupData.ext);",
+							"                console.log('Ring Group Destinations:', ringGroupData.destinations);",
+							"                console.log('Ring Group Last Destination:', ringGroupData.last_dest);",
+							"                console.log('Ring Group Last Destination is Voicemail:', ringGroupData.last_dest_vm);",
+							"                ",
+							"                // Push the Ring Group ID to the array",
+							"                rgIDs.push(ringGroupID);",
+							"            });",
+							"        }",
+							"        ",
+							"        // Save the Ring Group IDs to variables",
+							"        pm.collectionVariables.set('RGsID', rgIDs);",
+							"        pm.environment.set('RGsID', rgIDs);",
+							"    });",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{IP}}/index.php?apikey={{API_Key}}&action=pbxware.ring_group.list&server={{Server}}",
+					"protocol": "http",
+					"host": [
+						"{{IP}}"
+					],
+					"path": [
+						"index.php"
+					],
+					"query": [
+						{
+							"key": "apikey",
+							"value": "{{API_Key}}"
+						},
+						{
+							"key": "action",
+							"value": "pbxware.ring_group.list"
+						},
+						{
+							"key": "server",
+							"value": "{{Server}}",
+							"description": "Filter Ring Group list by Server/Tenant ID. If PBXware is running in Tenant Mode this is a required field and must contain a valid Tenant ID. ID 1 is always assigned to Master tenant and cannot be used."
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listing Tenant Packages",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check for 200 OK response",
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Parse the response JSON",
+							"var responseBody = pm.response.json();",
+							"",
+							"// Check if there is an error field in the response",
+							"if ('error' in responseBody) {",
+							"    console.error(\"Test Failed: \" + responseBody.error);",
+							"    pm.test('API Response Error', function () {",
+							"        pm.expect.fail(responseBody.error);",
+							"    });",
+							"} else {",
+							"    // Validate the response structure",
+							"    pm.test('Response Validation', function () {",
+							"        pm.expect(responseBody).to.be.an('object');",
+							"",
+							"        // Iterate through the keys (IDs) in the response",
+							"        for (var id in responseBody) {",
+							"            var packageName = responseBody[id];",
+							"",
+							"            // Validate specific properties for each package",
+							"            pm.expect(packageName).to.be.a('string');",
+							"        }",
+							"    });",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{IP}}/index.php?apikey={{API_Key}}&action=pbxware.package.list",
+					"protocol": "http",
+					"host": [
+						"{{IP}}"
+					],
+					"path": [
+						"index.php"
+					],
+					"query": [
+						{
+							"key": "apikey",
+							"value": "{{API_Key}}"
+						},
+						{
+							"key": "action",
+							"value": "pbxware.package.list",
+							"description": "Response will consist of an array of tenants with array key being the Tenant Package ID."
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listing Tenants",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check for 200 OK response",
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Parse the response JSON",
+							"var responseBody = pm.response.json();",
+							"",
+							"// Check if there is an error field in the response",
+							"if ('error' in responseBody) {",
+							"    console.error(\"Test Failed: \" + responseBody.error);",
+							"    pm.test('API Response Error', function () {",
+							"        pm.expect.fail(responseBody.error);",
+							"    });",
+							"} else {",
+							"    // Check if the response body is an empty array",
+							"    if (Array.isArray(responseBody) && responseBody.length === 0) {",
+							"        console.error(\"Test Failed: There is no Tenant created on this system!\");",
+							"        pm.test('Empty Response', function () {",
+							"            pm.expect.fail(\"There is no Tenant created on this system!\");",
+							"        });",
+							"    } else {",
+							"        // Validate the response structure",
+							"        pm.test('Response Validation', function () {",
+							"            // Iterate through each object in the response",
+							"            for (var key in responseBody) {",
+							"                if (responseBody.hasOwnProperty(key)) {",
+							"                    var tenant = responseBody[key];",
+							"",
+							"                    pm.test('Tenant ' + tenant.name + ' Validation', function () {",
+							"                        pm.expect(tenant).to.be.an('object');",
+							"                        pm.expect(tenant).to.have.property('name').that.is.a('string');",
+							"                        pm.expect(tenant).to.have.property('tenantcode').that.is.a('string');",
+							"                        pm.expect(tenant).to.have.property('package_id').that.is.a('number');",
+							"                        pm.expect(tenant).to.have.property('package').that.is.a('string');",
+							"                        pm.expect(tenant).to.have.property('ext_length').that.is.a('number');",
+							"                        pm.expect(tenant).to.have.property('country_id').that.is.a('number');",
+							"                        pm.expect(tenant).to.have.property('country_code').that.is.a('number');",
+							"                    });",
+							"                }",
+							"            }",
+							"        });",
+							"    }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{IP}}/index.php?apikey={{API_Key}}&action=pbxware.tenant.list",
+					"protocol": "http",
+					"host": [
+						"{{IP}}"
+					],
+					"path": [
+						"index.php"
+					],
+					"query": [
+						{
+							"key": "apikey",
+							"value": "{{API_Key}}"
+						},
+						{
+							"key": "action",
+							"value": "pbxware.tenant.list",
+							"description": "Response will consist of an array of tenants with array key being the Tenant ID."
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listing Trunks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.unset(\"TrunkIDs\");",
+							"// Check for 200 OK response",
+							"pm.test('Status code is 200 OK', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Parse the response JSON",
+							"var responseBody = pm.response.json();",
+							"",
+							"// Check if there is an error field in the response",
+							"if ('error' in responseBody) {",
+							"    console.error(\"Test Failed: \" + responseBody.error);",
+							"    pm.test('API Response Error', function () {",
+							"        pm.expect.fail(responseBody.error);",
+							"    });",
+							"} else {",
+							"    // Validate the response structure",
+							"    pm.test('Response Validation', function () {",
+							"        pm.expect(responseBody).to.be.an('object');",
+							"        ",
+							"        // Get the existing TrunkIDs array from the collection variable",
+							"        var trunkIDs = pm.collectionVariables.get('TrunkIDs') || [];",
+							"",
+							"        // Loop through trunk data",
+							"        for (var trunkID in responseBody) {",
+							"            var trunkData = responseBody[trunkID];",
+							"            ",
+							"            // Validate specific properties for each trunk",
+							"            pm.test('Trunk ' + trunkID + ' Data Validation', function () {",
+							"                pm.expect(trunkData).to.be.an('object');",
+							"                pm.expect(trunkData).to.have.property('name').that.is.a('string');",
+							"                pm.expect(trunkData).to.have.property('protocol').that.is.a('string');",
+							"                pm.expect(trunkData).to.have.property('provider_id').that.is.a('string');",
+							"                pm.expect(trunkData).to.have.property('provider_name').that.is.a('string');",
+							"                pm.expect(trunkData).to.have.property('status').that.is.oneOf(['enabled', 'disabled']);",
+							"                ",
+							"                // Push the trunk ID to the TrunkIDs array",
+							"                trunkIDs.push(trunkID);",
+							"                ",
+							"                // Print the result for each trunk",
+							"                console.log('Trunk ID:', trunkID);",
+							"                console.log('Trunk Name:', trunkData.name);",
+							"                console.log('Protocol:', trunkData.protocol);",
+							"                console.log('Provider ID:', trunkData.provider_id);",
+							"                console.log('Provider Name:', trunkData.provider_name);",
+							"                console.log('Status:', trunkData.status);",
+							"            });",
+							"        }",
+							"",
+							"        // Update the TrunkIDs array in the collection variable",
+							"        pm.collectionVariables.set('TrunkIDs', trunkIDs);",
+							"        pm.environment.set(\"TrunkIDs\", trunkIDs);",
+							"    });",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{IP}}/index.php?apikey={{API_Key}}&action=pbxware.trunk.list",
+					"protocol": "http",
+					"host": [
+						"{{IP}}"
+					],
+					"path": [
+						"index.php"
+					],
+					"query": [
+						{
+							"key": "apikey",
+							"value": "{{API_Key}}"
+						},
+						{
+							"key": "action",
+							"value": "pbxware.trunk.list"
+						},
+						{
+							"key": "server",
+							"value": "{{Srv/Tenant-ID}}",
+							"description": "Filter trunks by server (does not apply in Tenant Mode)",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "DID-IDs",
+			"value": ""
+		}
+	]
+}
