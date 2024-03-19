@@ -699,7 +699,7 @@
 			"response": []
 		},
 		{
-			"name": "License Refresh",
+			"name": "License Last Refreshed",
 			"event": [
 				{
 					"listen": "test",
@@ -723,8 +723,8 @@
 							"    // Validate the response structure",
 							"    pm.test('Response Validation', function () {",
 							"        pm.expect(responseBody).to.be.an('object');",
-							"        pm.expect(responseBody).to.have.property('status').that.is.a('string');",
-							"        console.log('License Refresh Status:', responseBody.status);",
+							"        pm.expect(responseBody).to.have.property('last_refreshed').that.is.a('string');",
+							"        console.log('Last Refreshed Timestamp:', responseBody.last_refreshed);",
 							"    });",
 							"}",
 							""
@@ -737,7 +737,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{IP}}/index.php?apikey={{API_Key}}&action=pbxware.license.refresh",
+					"raw": "http://{{IP}}/index.php?apikey={{API_Key}}&action=pbxware.license.last_refreshed",
 					"protocol": "http",
 					"host": [
 						"{{IP}}"
@@ -752,7 +752,7 @@
 						},
 						{
 							"key": "action",
-							"value": "pbxware.license.refresh"
+							"value": "pbxware.license.last_refreshed"
 						}
 					]
 				}
